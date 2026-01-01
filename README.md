@@ -1,23 +1,32 @@
-# Exemple de Pipeline LCEL
+# Pipeline LCEL - Décomposition et Synthèse de Questions
 
 ## Où les pipes LCEL ont été utilisés
 
-Les pipes LCEL (`|`) sont utilisés pour composer les composants:
+Les pipes LCEL (`|`) composent les Runnables LangChain :
 
-1. **Décomposeur**: `decompose_prompt | ChatOpenAI(...)` - Compose le prompt avec le modèle
-2. **Chaîne de réponses**: `answer_prompt | ChatOpenAI(...)` - Compose prompt et modèle pour répondre
-3. **Combinateur**: `format_runnable | combine_prompt | ChatOpenAI(...)` - Pipeline à 3 étapes
-4. **Pipeline complet**: `decomposer | parse_subq_runnable | run_answers_runnable | combiner`
+1. **Décomposeur** : `decompose_prompt | ChatOllama(...)` - Prompt + modèle
+2. **Répondeur** : `answer_prompt | ChatOllama(...)` - Répond aux sous-questions
+3. **Combinateur** : `format_runnable | combine_prompt | ChatOllama(...)` - 3 étapes
+4. **Pipeline** : `decomposer | parse_subq_runnable | run_answers_runnable | combiner`
 
-## Pourquoi le traitement par lots (batch) est utile
+## Pourquoi batch() est utile
 
-La méthode `batch()` exécute toutes les sous-questions **en parallèle** plutôt que séquentiellement. Pour 3 sous-questions, cela signifie une exécution ~3x plus rapide car les appels API sont effectués simultanément au lieu d'attendre la fin de chaque réponse.
+Le traitement par lots exécute les appels **en parallèle**. Pour 3 sous-questions : ~3x plus rapide (appels simultanés vs séquentiels).
+
+## Résultats
+
+### Question 1 : Latence ML
+- **Sous-questions** : Optimisation Web, Qualité données, Outils ML
+- **Synthèse** : Optimisation + données + bibliothèques appropriées
+
+### Question 2 : Sécurité API
+- **Sous-questions** : Authentification, Validation, Cryptage
+- **Synthèse** : Auth robuste + validation entrées + chiffrement
 
 ## Exécution
 
 ```bash
 pip install -r requirements.txt
-set OPENAI_API_KEY=votre-clé
 python lcel_no_json_example.py
 ```
 
@@ -26,3 +35,5 @@ python lcel_no_json_example.py
 ```bash
 python -m unittest test_decomposer.py -v
 ```
+
+6 tests OK ✅
